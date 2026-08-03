@@ -1,0 +1,55 @@
+<div class="pagina">
+  <header>
+    <h2>Calendario de inspecciones</h2>
+    <select [(ngModel)]="filtroTipoId" (ngModelChange)="onCambiarFiltro()">
+      <option [ngValue]="'todas'">Todos los módulos</option>
+      @for (t of tiposInspeccion(); track t.id) {
+        <option [ngValue]="t.id">{{ t.nombre }}</option>
+      }
+    </select>
+  </header>
+
+  <div class="controles-mes">
+    <button class="nav" (click)="mesAnterior()">‹</button>
+    <h3>{{ tituloMes() }}</h3>
+    <button class="nav" (click)="mesSiguiente()">›</button>
+    <button class="hoy" (click)="irAHoy()">Hoy</button>
+    @if (cargando()) { <span class="cargando">Cargando...</span> }
+  </div>
+
+  <div class="calendario">
+    <div class="fila encabezado">
+      @for (d of diasSemana; track d) {
+        <div class="celda-encabezado">{{ d }}</div>
+      }
+    </div>
+
+    @for (semana of semanas(); track $index) {
+      <div class="fila">
+        @for (dia of semana; track dia.iso) {
+          <div class="celda" [class.fuera-de-mes]="!dia.enMesActual" [class.hoy]="dia.esHoy">
+            <span class="numero-dia">{{ dia.fecha.getDate() }}</span>
+            <div class="inspecciones-dia">
+              @for (insp of dia.inspecciones; track insp.id) {
+                <button
+                  class="chip-inspeccion"
+                  [class]="claseTipo(insp.tipo_inspeccion_clave)"
+                  (click)="irADetalle(insp)"
+                  [title]="insp.estacion_nombre + ' — ' + insp.folio"
+                >
+                  {{ insp.folio }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="leyenda">
+    <span class="punto chip-nom005"></span> NOM-005
+    <span class="punto chip-anexos"></span> Anexos 21-22
+    <span class="punto chip-nom016"></span> NOM-016
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="pagina">
+  <header>
+    <h2>Empleados y usuarios</h2>
+    <button (click)="toggleFormulario()">
+      {{ mostrarFormulario() ? 'Cancelar' : '+ Nuevo usuario' }}
+    </button>
+  </header>
+
+  @if (mostrarFormulario()) {
+    <form class="formulario" [formGroup]="form" (ngSubmit)="crear()">
+      <div class="grid">
+        <label>Nombre <input formControlName="nombre" /></label>
+        <label>Apellido <input formControlName="apellido" /></label>
+        <label>Email <input type="email" formControlName="email" /></label>
+        <label>Contraseña temporal <input type="password" formControlName="password" /></label>
+        <label>Teléfono <input formControlName="telefono" /></label>
+        <label>Puesto <input formControlName="puesto" placeholder="Inspector" /></label>
+        <label>Rol
+          <select formControlName="rol">
+            <option value="empleado">Empleado (inspector)</option>
+            <option value="gerente">Gerente</option>
+          </select>
+        </label>
+      </div>
+      @if (error()) { <p class="error">{{ error() }}</p> }
+      <button type="submit" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Guardando...' : 'Crear usuario' }}
+      </button>
+    </form>
+  }
+
+  <table class="tabla">
+    <thead><tr><th>Nombre</th><th>Email</th><th>Puesto</th><th>Rol</th><th>Estatus</th><th></th></tr></thead>
+    <tbody>
+      @for (u of usuarios(); track u.id) {
+        <tr>
+          <td>{{ u.nombre }} {{ u.apellido }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.puesto }}</td>
+          <td>{{ u.rol }}</td>
+          <td>{{ u.activo ? 'Activo' : 'Inactivo' }}</td>
+          <td>
+            @if (u.activo) {
+              <button class="link peligro" (click)="desactivar(u)">Desactivar</button>
+            } @else {
+              <button class="link" (click)="reactivar(u)">Reactivar</button>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">No hay usuarios registrados.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>

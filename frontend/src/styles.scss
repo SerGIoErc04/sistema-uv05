@@ -1,0 +1,111 @@
+/* ============================================================
+   Unidad Verificadora 05 Sureste — sistema de diseño
+   Paleta: navy de registro + ámbar de señalética de seguridad.
+   Tipografía: Space Grotesk (títulos) + Inter (UI) + IBM Plex Mono (folios).
+   ============================================================ */
+
+:root {
+  /* Color */
+  --ink: #10243d;
+  --ink-2: #1b3a5c;
+  --ink-soft: #2c4d70;
+  --canvas: #f5f6f3;
+  --surface: #ffffff;
+  --accent: #e2962f;
+  --accent-ink: #7a4a0f;
+  --success: #1f7a4d;
+  --success-bg: #e3f3ea;
+  --danger: #b23a2e;
+  --danger-bg: #fbe9e7;
+  --warning-bg: #fbedd6;
+  --warning-ink: #8a5a10;
+  --line: #e2e6ea;
+  --muted: #64748b;
+  --text: #1c2b3a;
+
+  /* Tipografía */
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+
+  /* Escala */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 2px rgba(16, 36, 61, 0.04), 0 8px 24px rgba(16, 36, 61, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--canvas);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Foco visible consistente en toda la app (accesibilidad) */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button { font-family: var(--font-body); }
+input, select {
+  font-family: var(--font-body);
+  color: var(--text);
+}
+
+/* ------------------------------------------------------------
+   Firma visual: folios/IDs como "talón" de comprobante oficial.
+   Se usa en las tablas y el detalle de inspección para OT/LD/LC/
+   LOM/AD/AC/AOM/OS/AI/LI y el folio genérico UV05-....
+   ------------------------------------------------------------ */
+.folio-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px dashed #c7cdd4;
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.55rem;
+  white-space: nowrap;
+}
+
+/* Estatus de inspección: pills consistentes en toda la app */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+}
+.badge-pendiente { background: var(--warning-bg); color: var(--warning-ink); }
+.badge-en_proceso { background: #dce9f7; color: #1c5fa3; }
+.badge-completada { background: var(--success-bg); color: var(--success); }
+.badge-cancelada { background: var(--danger-bg); color: var(--danger); }

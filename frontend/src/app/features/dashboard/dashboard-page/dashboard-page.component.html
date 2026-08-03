@@ -1,0 +1,17 @@
+<div class="dashboard">
+  <h2>Bienvenido, {{ auth.usuario()?.nombre }}</h2>
+  <p>Rol: {{ auth.usuario()?.rol }}</p>
+
+  @if (auth.esGerente() && metricas()) {
+    <div class="tarjetas">
+      @for (item of metricas().inspecciones_por_estatus; track item.estatus) {
+        <div class="tarjeta">
+          <span class="valor">{{ item.total }}</span>
+          <span class="etiqueta">{{ item.estatus }}</span>
+        </div>
+      }
+    </div>
+  } @else if (!auth.esGerente()) {
+    <p>Consulta tus inspecciones asignadas en el módulo correspondiente.</p>
+  }
+</div>

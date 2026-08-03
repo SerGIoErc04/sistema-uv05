@@ -1,0 +1,26 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="marca">
+      <img src="/img/emblema-uv05.png" alt="UV05" class="emblema" />
+      <h1>Del Sureste</h1>
+    </div>
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="activo">Dashboard</a>
+      <a routerLink="/calendario" routerLinkActive="activo">Calendario</a>
+      <a routerLink="/inspecciones/nom-005" routerLinkActive="activo">NOM-005</a>
+      <a routerLink="/inspecciones/anexos-21-22" routerLinkActive="activo">Anexos 21-22</a>
+      <a routerLink="/inspecciones/nom-016" routerLinkActive="activo">NOM-016</a>
+      @if (auth.esGerente()) {
+        <a routerLink="/estaciones" routerLinkActive="activo">Estaciones</a>
+        <a routerLink="/usuarios" routerLinkActive="activo">Empleados</a>
+      }
+    </nav>
+    <button class="salir" (click)="auth.logout()">Cerrar sesión</button>
+  </aside>
+  <main class="contenido">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<app-confirm-dialog></app-confirm-dialog>
+<app-toast></app-toast>

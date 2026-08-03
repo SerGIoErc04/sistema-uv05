@@ -1,0 +1,17 @@
+@if (ui.estadoConfirm().visible) {
+  <div class="overlay" (click)="ui.resolverConfirm(false)">
+    <div class="dialogo" [class.peligro]="ui.estadoConfirm().peligro" (click)="$event.stopPropagation()">
+      <div class="icono">{{ ui.estadoConfirm().peligro ? '⚠️' : '❓' }}</div>
+      <h3>{{ ui.estadoConfirm().titulo || 'Confirmar acción' }}</h3>
+      <p>{{ ui.estadoConfirm().mensaje }}</p>
+      <div class="botones">
+        <button class="cancelar" (click)="ui.resolverConfirm(false)">
+          {{ ui.estadoConfirm().textoCancelar || 'Cancelar' }}
+        </button>
+        <button class="confirmar" (click)="ui.resolverConfirm(true)">
+          {{ ui.estadoConfirm().textoConfirmar || 'Confirmar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

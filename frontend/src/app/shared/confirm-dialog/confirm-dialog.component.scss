@@ -1,0 +1,80 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 36, 61, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: aparecer 0.15s ease;
+}
+
+.dialogo {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 24px 60px rgba(8, 20, 36, 0.35);
+  text-align: center;
+  animation: entrar 0.18s ease;
+
+  .icono { font-size: 1.8rem; margin-bottom: 0.5rem; }
+
+  h3 {
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+    line-height: 1.4;
+  }
+
+  .botones {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.65rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: filter 0.12s ease, background 0.12s ease;
+    }
+
+    .cancelar {
+      background: var(--canvas);
+      color: var(--text);
+      border: 1px solid var(--line);
+      &:hover { border-color: var(--ink-soft); }
+    }
+
+    .confirmar {
+      background: var(--ink);
+      color: #fff;
+      &:hover { background: var(--ink-2); }
+    }
+  }
+
+  &.peligro .botones .confirmar {
+    background: var(--danger);
+    &:hover { filter: brightness(0.92); }
+  }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

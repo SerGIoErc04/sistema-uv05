@@ -1,0 +1,194 @@
+@if (inspeccion(); as i) {
+  <div class="pagina">
+    <header>
+      <div>
+        <span class="folio-chip folio-chip-lg">{{ i.folio }}</span>
+        <p class="modulo">{{ i.tipo_inspeccion_nombre }}</p>
+        @if (i.tipo_inspeccion_clave === 'NOM-005') {
+          <p class="folios-extra">
+            Lista de Inspección: <span class="folio-chip">{{ i.folio_lista_inspeccion }}</span>
+            Acta Asignada: <span class="folio-chip">{{ i.folio_acta }}</span>
+          </p>
+        }
+        @if (i.tipo_inspeccion_clave === 'ANEXOS-21-22') {
+          <p class="folios-extra">
+            Id. Lista Inspección: <span class="folio-chip">{{ i.folio_lista_inspeccion }}</span>
+            De Acta Asignada: <span class="folio-chip">{{ i.folio_acta }}</span>
+          </p>
+        }
+        <p class="ubicacion">{{ i.estacion_nombre }} — {{ i.fecha_programada | date:'dd/MM/yyyy' }}</p>
+        @if (i.fecha_solicitud || i.nombre_solicitante) {
+          <p class="ubicacion">
+            @if (i.fecha_solicitud) { Solicitud: {{ i.fecha_solicitud | date:'dd/MM/yyyy' }} }
+            @if (i.nombre_solicitante) { &nbsp;·&nbsp; Solicitante: {{ i.nombre_solicitante }} }
+          </p>
+        }
+      </div>
+      <div class="acciones-estatus">
+        @if (i.tipo_inspeccion_clave === 'NOM-005') {
+          <button class="secundario" (click)="descargarOrdenTrabajo()" [disabled]="descargando()">
+            {{ descargando() ? 'Generando...' : '📄 Descargar Orden de Trabajo' }}
+          </button>
+        }
+        @if (auth.usuario()?.rol === 'empleado' && i.estatus !== 'completada' && i.estatus !== 'cancelada') {
+          <button (click)="cambiarEstatus('completada')">Marcar como completada</button>
+        }
+        @if (auth.esGerente() && i.estatus !== 'cancelada' && i.estatus !== 'completada') {
+          <button class="cancelar" (click)="cambiarEstatus('cancelada')">Cancelar</button>
+        }
+      </div>
+    </header>
+
+    <section class="horario">
+      <h3>Horario de la inspección</h3>
+      <div class="campos-horario">
+        <label>Hora de inicio
+          <input type="time" [(ngModel)]="horaInicio" [disabled]="i.estatus === 'cancelada'" />
+        </label>
+        <label>Hora de término
+          <input type="time" [(ngModel)]="horaTermino" [disabled]="i.estatus === 'cancelada'" />
+        </label>
+        <label>Fecha de finalización
+          <input type="date" [(ngModel)]="fechaFinalizacion" [disabled]="i.estatus === 'cancelada'" />
+        </label>
+        <button (click)="guardarHorario()" [disabled]="guardandoHorario() || i.estatus === 'cancelada'">
+          {{ guardandoHorario() ? 'Guardando...' : 'Guardar horario' }}
+        </button>
+      </div>
+      <p class="nota">Por defecto es la misma fecha de la inspección; ajústala si el trabajo se extendió varios días.</p>
+    </section>
+
+    <section class="datos-generales">
+      <h3>Datos de la inspección</h3>
+
+      <div class="bloque-testigos">
+        <div class="testigo">
+          <h4>Testigo 1</h4>
+          <div class="grid-testigo">
+            <label>Nombre
+              <input [(ngModel)]="datosGenerales.testigo1_nombre" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+            <label>Tipo de documento
+              <select [(ngModel)]="datosGenerales.testigo1_tipo_documento" [disabled]="i.estatus === 'cancelada'">
+                <option value="" disabled selected>Selecciona...</option>
+                @for (td of tiposDocumento; track td) { <option [value]="td">{{ td }}</option> }
+              </select>
+            </label>
+            <label>Documento (Id.)
+              <input [(ngModel)]="datosGenerales.testigo1_documento_id" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+            <label class="full">Domicilio particular
+              <input [(ngModel)]="datosGenerales.testigo1_domicilio" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+          </div>
+        </div>
+
+        <div class="testigo">
+          <h4>Testigo 2</h4>
+          <div class="grid-testigo">
+            <label>Nombre
+              <input [(ngModel)]="datosGenerales.testigo2_nombre" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+            <label>Tipo de documento
+              <select [(ngModel)]="datosGenerales.testigo2_tipo_documento" [disabled]="i.estatus === 'cancelada'">
+                <option value="" disabled selected>Selecciona...</option>
+                @for (td of tiposDocumento; track td) { <option [value]="td">{{ td }}</option> }
+              </select>
+            </label>
+            <label>Documento (Id.)
+              <input [(ngModel)]="datosGenerales.testigo2_documento_id" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+            <label class="full">Domicilio particular
+              <input [(ngModel)]="datosGenerales.testigo2_domicilio" [disabled]="i.estatus === 'cancelada'" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button
+        class="guardar-bloque"
+        (click)="guardarDatosGenerales()"
+        [disabled]="guardandoDatosGenerales() || i.estatus === 'cancelada'"
+      >
+        {{ guardandoDatosGenerales() ? 'Guardando...' : 'Guardar testigos' }}
+      </button>
+
+      <hr class="separador" />
+
+      <h4>Tanques</h4>
+      <div class="tabla-tanques">
+        <div class="fila-tanque encabezado">
+          <span>No. de tanque</span>
+          <span>Capacidad</span>
+          <span>Producto</span>
+          <span></span>
+        </div>
+        @for (tanque of tanques(); track $index) {
+          <div class="fila-tanque">
+            <input [(ngModel)]="tanque.numero_tanque" placeholder="1" [disabled]="i.estatus === 'cancelada'" />
+            <input [(ngModel)]="tanque.capacidad" placeholder="20,000 L" [disabled]="i.estatus === 'cancelada'" />
+            <select [(ngModel)]="tanque.producto" [disabled]="i.estatus === 'cancelada'">
+              <option value="" disabled selected>Selecciona...</option>
+              @for (p of productos; track p) { <option [value]="p">{{ p }}</option> }
+            </select>
+            <button class="quitar" (click)="quitarTanque($index)" [disabled]="i.estatus === 'cancelada'">✕</button>
+          </div>
+        } @empty {
+          <p class="sin-tanques">Aún no se han registrado tanques.</p>
+        }
+      </div>
+
+      <div class="acciones-tanques">
+        <button class="agregar" (click)="agregarTanque()" [disabled]="i.estatus === 'cancelada'">+ Agregar tanque</button>
+        <button
+          class="guardar-bloque"
+          (click)="guardarTanques()"
+          [disabled]="guardandoTanques() || i.estatus === 'cancelada'"
+        >
+          {{ guardandoTanques() ? 'Guardando...' : 'Guardar tanques' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="normativas">
+      <h3>Checklist — {{ i.tipo_inspeccion_nombre }}</h3>
+      @for (n of normativasRequeridas(); track n.id) {
+        <div class="fila-normativa">
+          <span class="clave">{{ n.clave }}</span>
+          <span class="nombre">{{ n.nombre }}</span>
+          <div class="botones">
+            <button
+              [class.activo]="resultadoDe(n.id)?.cumple === true"
+              (click)="registrarResultado(n, true)">Cumple</button>
+            <button
+              class="no-cumple"
+              [class.activo]="resultadoDe(n.id)?.cumple === false"
+              (click)="registrarResultado(n, false)">No cumple</button>
+          </div>
+        </div>
+      }
+    </section>
+
+    <section class="evidencias">
+      <h3>Evidencias</h3>
+
+      <div class="subir">
+        <input type="file" accept="image/*,application/pdf" (change)="onArchivoSeleccionado($event)" [disabled]="subiendo()" />
+        @if (subiendo()) { <span class="subiendo">Subiendo...</span> }
+      </div>
+      @if (mensaje()) { <p class="mensaje">{{ mensaje() }}</p> }
+
+      <ul class="lista-evidencias">
+        @for (ev of evidencias(); track ev.id) {
+          <li>
+            <span class="tipo">{{ ev.tipo_archivo }}</span>
+            {{ ev.nombre_original }}
+            <span class="fecha">{{ ev.creado_en | date:'dd/MM/yyyy HH:mm' }}</span>
+          </li>
+        } @empty {
+          <li>Aún no hay evidencias cargadas.</li>
+        }
+      </ul>
+    </section>
+  </div>
+}

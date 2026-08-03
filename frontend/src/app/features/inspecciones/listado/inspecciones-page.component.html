@@ -1,0 +1,112 @@
+<div class="pagina">
+  <header>
+    <h2>{{ tipoActual()?.nombre || 'Inspecciones' }}</h2>
+    @if (auth.esGerente()) {
+      <button (click)="toggleFormulario()">
+        {{ mostrarFormulario() ? 'Cancelar' : '+ Asignar inspección' }}
+      </button>
+    }
+  </header>
+
+  <form class="filtros" [formGroup]="filtros" (ngSubmit)="cargar()">
+    <select formControlName="estacion_id">
+      <option value="">Todas las estaciones</option>
+      @for (e of estaciones(); track e.id) {
+        <option [value]="e.id">{{ e.nombre }}</option>
+      }
+    </select>
+    <select formControlName="estatus">
+      <option value="">Cualquier estatus</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="en_proceso">En proceso</option>
+      <option value="completada">Completada</option>
+      <option value="cancelada">Cancelada</option>
+    </select>
+    <input type="date" formControlName="fecha_desde" />
+    <input type="date" formControlName="fecha_hasta" />
+    <button type="submit">Filtrar</button>
+  </form>
+
+  @if (mostrarFormulario()) {
+    <form class="formulario" [formGroup]="form" (ngSubmit)="guardar()">
+      <h3 class="titulo-formulario">{{ editando() ? 'Editar inspección' : 'Nueva inspección' }}</h3>
+      <div class="grid">
+        <label>Estación
+          <select formControlName="estacion_id">
+            <option value="" disabled selected>Selecciona...</option>
+            @for (e of estaciones(); track e.id) { <option [value]="e.id">{{ e.nombre }}</option> }
+          </select>
+        </label>
+        <label>Empleado asignado
+          <select formControlName="empleado_id">
+            <option value="" disabled selected>Selecciona...</option>
+            @for (emp of empleados(); track emp.id) {
+              <option [value]="emp.id">{{ emp.nombre }} {{ emp.apellido }}</option>
+            }
+          </select>
+        </label>
+        <label>Fecha programada <input type="date" formControlName="fecha_programada" /></label>
+        @if (esModuloNom005) {
+          <label>Hora programada <input type="time" formControlName="hora_programada" /></label>
+        }
+        <label>Fecha de solicitud <input type="date" formControlName="fecha_solicitud" /></label>
+        <label>Nombre del solicitante <input formControlName="nombre_solicitante" placeholder="Se escribe manualmente" /></label>
+        @if (esModuloNom005) {
+          <label>Etapa
+            <select formControlName="etapa">
+              <option value="" disabled selected>Selecciona...</option>
+              @for (e of etapas; track e.value) { <option [value]="e.value">{{ e.label }}</option> }
+            </select>
+          </label>
+        }
+        <label class="full">Notas <input formControlName="notas" /></label>
+      </div>
+      @if (error()) { <p class="error">{{ error() }}</p> }
+      <button type="submit" [disabled]="form.invalid || guardando()">
+        @if (guardando()) {
+          {{ editando() ? 'Guardando...' : 'Creando...' }}
+        } @else {
+          {{ editando() ? 'Guardar cambios' : 'Crear y asignar' }}
+        }
+      </button>
+    </form>
+  }
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>{{ etiquetasFolio?.folio || 'Folio' }}</th>
+        @if (etiquetasFolio) {
+          <th>{{ etiquetasFolio.lista }}</th>
+          <th>{{ etiquetasFolio.acta }}</th>
+        }
+        <th>Estación</th><th>Empleado</th><th>Fecha</th><th>Estatus</th><th></th>
+        @if (auth.esGerente()) { <th></th> }
+      </tr>
+    </thead>
+    <tbody>
+      @for (i of inspecciones(); track i.id) {
+        <tr>
+          <td><span class="folio-chip">{{ i.folio }}</span></td>
+          @if (etiquetasFolio) {
+            <td><span class="folio-chip">{{ i.folio_lista_inspeccion }}</span></td>
+            <td><span class="folio-chip">{{ i.folio_acta }}</span></td>
+          }
+          <td>{{ i.estacion_nombre }}</td>
+          <td>{{ i.empleado_nombre }} {{ i.empleado_apellido }}</td>
+          <td>{{ i.fecha_programada | date:'dd/MM/yyyy' }}</td>
+          <td><span [class]="claseEstatus(i.estatus)">{{ i.estatus }}</span></td>
+          <td><a [routerLink]="['/inspecciones/detalle', i.id]">Ver detalle</a></td>
+          @if (auth.esGerente()) {
+            <td class="acciones">
+              <button class="link" (click)="editar(i)">Editar</button>
+              <button class="link peligro" (click)="eliminar(i)">Eliminar</button>
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr><td [attr.colspan]="etiquetasFolio ? (auth.esGerente() ? 9 : 8) : (auth.esGerente() ? 7 : 6)">No hay inspecciones con estos filtros.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>

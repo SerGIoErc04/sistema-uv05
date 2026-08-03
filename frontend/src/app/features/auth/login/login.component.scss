@@ -1,0 +1,84 @@
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(226, 150, 47, 0.12), transparent 40%),
+    linear-gradient(160deg, var(--ink) 0%, var(--ink-2) 65%, var(--ink-soft) 100%);
+  padding: 1.5rem;
+}
+
+.login-card {
+  background: var(--surface);
+  padding: 2.75rem 2.5rem;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 60px rgba(8, 20, 36, 0.35);
+
+  .logo {
+    display: block;
+    height: 76px;
+    width: auto;
+    margin: 0 auto 0.5rem;
+  }
+
+  .subtitulo {
+    margin: 0 0 1.75rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+
+    input {
+      display: block;
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+      &:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(226, 150, 47, 0.18);
+        outline: none;
+      }
+    }
+  }
+
+  .error {
+    color: var(--danger);
+    background: var(--danger-bg);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+    margin: 0 0 1rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease;
+
+    &:hover:not(:disabled) { background: var(--ink-2); }
+    &:active:not(:disabled) { transform: translateY(1px); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+}

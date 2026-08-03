@@ -1,0 +1,15 @@
+<div class="contenedor-toasts">
+  @for (t of ui.toasts(); track t.id) {
+    <div class="toast" [class]="'toast-' + t.tipo">
+      <span class="icono">
+        @switch (t.tipo) {
+          @case ('error') { ⛔ }
+          @case ('exito') { ✅ }
+          @default { ℹ️ }
+        }
+      </span>
+      <span class="mensaje">{{ t.mensaje }}</span>
+      <button class="cerrar" (click)="ui.cerrarToast(t.id)">✕</button>
+    </div>
+  }
+</div>

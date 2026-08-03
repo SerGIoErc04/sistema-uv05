@@ -1,0 +1,72 @@
+<div class="pagina">
+  <header>
+    <h2>Estaciones</h2>
+    @if (auth.esGerente()) {
+      <button (click)="toggleFormulario()">
+        {{ mostrarFormulario() ? 'Cancelar' : '+ Nueva estación' }}
+      </button>
+    }
+  </header>
+
+  @if (mostrarFormulario()) {
+    <form class="formulario" [formGroup]="form" (ngSubmit)="guardar()">
+      <h3 class="titulo-formulario">{{ editando() ? 'Editar estación' : 'Nueva estación' }}</h3>
+      <div class="grid">
+        <label>Nombre <input formControlName="nombre" /></label>
+        <label>Razón social <input formControlName="razon_social" /></label>
+        <label>RFC <input formControlName="rfc" /></label>
+        <label>Permiso CRE <input formControlName="permiso_cre" /></label>
+        <label>Representante legal <input formControlName="representante_legal" /></label>
+        <label>RFC del representante legal <input formControlName="rfc_representante_legal" /></label>
+        <label class="full">Dirección <input formControlName="direccion" /></label>
+        <label>Municipio <input formControlName="municipio" /></label>
+        <label>Estado <input formControlName="estado" /></label>
+        <label>Código postal <input formControlName="codigo_postal" /></label>
+        <label>Contacto <input formControlName="contacto_nombre" /></label>
+        <label>Teléfono <input formControlName="contacto_tel" /></label>
+        <label>Correo <input type="email" formControlName="correo" /></label>
+      </div>
+      @if (error()) { <p class="error">{{ error() }}</p> }
+      <button type="submit" [disabled]="form.invalid || guardando()">
+        @if (guardando()) {
+          {{ editando() ? 'Guardando...' : 'Creando...' }}
+        } @else {
+          {{ editando() ? 'Guardar cambios' : 'Guardar estación' }}
+        }
+      </button>
+    </form>
+  }
+
+  <div class="tabla-wrapper">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th><th>Dirección</th><th>Municipio</th><th>Estado</th><th>RFC</th>
+          <th>Representante legal</th><th>RFC representante</th>
+          @if (auth.esGerente()) { <th></th> }
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of estaciones(); track e.id) {
+          <tr>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.direccion }}</td>
+            <td>{{ e.municipio }}</td>
+            <td>{{ e.estado }}</td>
+            <td>{{ e.rfc }}</td>
+            <td>{{ e.representante_legal }}</td>
+            <td>{{ e.rfc_representante_legal }}</td>
+            @if (auth.esGerente()) {
+              <td class="acciones">
+                <button class="link" (click)="editar(e)">Editar</button>
+                <button class="link peligro" (click)="eliminar(e)">Eliminar</button>
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr><td [attr.colspan]="auth.esGerente() ? 8 : 7">No hay estaciones registradas.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

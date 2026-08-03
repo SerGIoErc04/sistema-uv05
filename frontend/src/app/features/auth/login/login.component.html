@@ -1,0 +1,24 @@
+<div class="login-wrapper">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="submit()">
+    <img src="/img/logo-uv05.png" alt="Unidad Verificadora 05 Del Sureste" class="logo" />
+    <p class="subtitulo">Sistema de Inspecciones</p>
+
+    <label>
+      Correo electrónico
+      <input type="email" formControlName="email" placeholder="correo@ejemplo.mx" />
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" formControlName="password" placeholder="••••••••" />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="form.invalid || cargando()">
+      {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+  </form>
+</div>
